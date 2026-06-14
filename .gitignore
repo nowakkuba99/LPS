@@ -32,5 +32,6 @@ DerivedData/
 *.swp
 *.swo
 
-# third_party — vendored, not tracked
-third_party/
+# third_party — large vendored libs excluded; small downloaded headers are tracked
+third_party/metal-cpp/
+third_party/metal-cpp-extensions/
