@@ -15,13 +15,13 @@ float loadParam(const uint2 position, const uint2 bounds, const float paramValue
 struct FrameData
 {
     uint counter;
-    float extortion;
+    float excitation;
     float readOut;
 };
 
 /* -- Compute function -- */
 
-kernel void add(texture2d< float, access::read_write> tex [[texture(0)]],
+kernel void computeLISA(texture2d< float, access::read_write> tex [[texture(0)]],
                 uint2 position [[thread_position_in_grid]],
                 uint2 gridSize [[threads_per_grid]],
                 device FrameData* frame [[buffer(0)]]) {
@@ -102,7 +102,7 @@ kernel void add(texture2d< float, access::read_write> tex [[texture(0)]],
         
         float w_next = 0;
         if(position.x == 2) {
-            w_next = frame->extortion;
+            w_next = frame->excitation;
         } else if(position.x >= crackLeft && position.x <= crackRight){
             
             int A = 0, B = 0, C = 0, D = 0, E = 0, F = 0, G = 0, H = 0;

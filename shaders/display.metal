@@ -59,7 +59,7 @@ struct VertexData
 struct FrameData
 {
     uint counter;
-    float extortion;
+    float excitation;
     float readOut;
 };
 

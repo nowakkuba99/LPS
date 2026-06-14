@@ -5,7 +5,7 @@
 #include <cstdlib>
 
 
-const static std::string SHADER_PATH = "/shaders/triangle.metal";   // shader path relative to executable placement
+const static std::string SHADER_PATH = "/shaders/display.metal";
 //const static std::string COMPUTE_SHADER_PATH = "/shaders/computeCrack.metal";
 const static std::string COMPUTE_SHADER_PATH = "/shaders/computeCrackElastic.metal";
 
@@ -63,7 +63,7 @@ void Renderer::buildComputePipeline() {
         assert(false);
     }
     
-    MTL::Function* pFunction = pComputeLibrary->newFunction(NS::String::string("add",NS::UTF8StringEncoding));
+    MTL::Function* pFunction = pComputeLibrary->newFunction(NS::String::string("computeLISA",NS::UTF8StringEncoding));
     _pComputePSO = _pDevice->newComputePipelineState(pFunction, &pError);
     if(!_pComputePSO) {
         __builtin_printf("%s", pError->localizedDescription()->utf8String());
@@ -141,25 +141,6 @@ void Renderer::buildBuffers() {
 }
 
 
-void Renderer::compute(MTL::CommandBuffer* pCommandBuffer) {
-    assert(pCommandBuffer);
-
-    MTL::ComputeCommandEncoder* pComputeEncoder = pCommandBuffer->computeCommandEncoder();
-    
-    pComputeEncoder->setComputePipelineState(_pComputePSO);
-    pComputeEncoder->setTexture(_pTexture, 0);
-    pComputeEncoder->setBuffer(_pTextureDataBuffer.at(_frame),0,0);
-    
-    MTL::Size gridSize = MTL::Size(kTextureWidth,kTextureHeight,1);
-    
-    NS::UInteger maxThreadGroupSize = _pComputePSO->maxTotalThreadsPerThreadgroup();
-    MTL::Size threadGroupSize = MTL::Size(maxThreadGroupSize,1,1);
-    
-    pComputeEncoder->dispatchThreads(gridSize, threadGroupSize);
-    
-    pComputeEncoder->endEncoding();
-}
-
 void Renderer::compute() {
     MTL::CommandBuffer* pNewCommandBuffer = _pCommandQueue->commandBuffer();
 //    // Read data from frame and write to file
@@ -177,7 +158,7 @@ void Renderer::compute() {
     // Set the current counter and extortion values
     FrameData* pFrameData = reinterpret_cast<FrameData*>(pTextureDataBuffer->contents());
     pFrameData->counter = _frame;
-    pFrameData->extortion = *_iExtortion;
+    pFrameData->excitation = *_iExcitation;
     pTextureDataBuffer->didModifyRange(NS::Range::Make(0, sizeof(FrameData)));
     
     // Try fast computing
@@ -197,7 +178,7 @@ void Renderer::compute() {
     pComputeEncoder->endEncoding();
     
     pNewCommandBuffer->commit();
-    ++_iExtortion;
+    ++_iExcitation;
 }
 
 void Renderer::readOut() {
@@ -228,7 +209,11 @@ void Renderer::draw( MTK::View* pView ) {
             ++_c;
         }
     }
-    // Create a command buffer object. This allows the app to encode commands for execution by the GPU.
+    // Sync display buffer counter so the fragment shader reads the freshest channel
+    FrameData* pDisplayData = reinterpret_cast<FrameData*>(_pDisplayDataBuffer.at(_frame)->contents());
+    pDisplayData->counter = _frame;
+    _pDisplayDataBuffer.at(_frame)->didModifyRange(NS::Range::Make(0, sizeof(FrameData)));
+
     MTL::CommandBuffer* pCmd = _pCommandQueue->commandBuffer();
     
     // Synchronize current frame with GPU
@@ -242,14 +227,9 @@ void Renderer::draw( MTK::View* pView ) {
     MTL::RenderPassDescriptor* pRpd = pView->currentRenderPassDescriptor();
     MTL::RenderCommandEncoder* pEnc = pCmd->renderCommandEncoder( pRpd );
 
-    // Encode commands the the GPU to draw triangle
     pEnc->setRenderPipelineState( _pPSO );
-    // Set buffers as parameters to shader code
     pEnc->setVertexBuffer(_pVertexDataBuffer, 0, 0);
-    
-    // Set FrameDataBuffer index to 1
-    MTL::Buffer* pDisplayDataBuffer = _pDisplayDataBuffer.at(_frame);
-    pEnc->setVertexBuffer(pDisplayDataBuffer, 0, 1);
+    pEnc->setVertexBuffer(_pDisplayDataBuffer.at(_frame), 0, 1);
     
     // Set texture
     pEnc->setFragmentTexture(_pTexture, /*index*/0);

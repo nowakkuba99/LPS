@@ -8,17 +8,6 @@
 
 namespace {
 template <typename T>
-inline void hannWindowMultiply(std::vector<T>& inputData)
-{
-    const unsigned int length = inputData.length();
-    /* HANNING WINDOW */
-    for(int i = 0; i < length; i++)
-    {
-        inputData[i] *= (0.5 * (1 - cos(2*M_PI*i/length)));
-    }
-}
-
-template <typename T>
 inline std::vector<T> hannWindow(const unsigned int length)
 {
     std::vector<T> hann(length);
@@ -46,7 +35,7 @@ struct timeVec
 }
 
 
-inline std::unique_ptr<std::vector<float>> getExtortionSingleSin() {
+inline std::unique_ptr<std::vector<float>> getExcitationSingleSin() {
     constexpr float simTime{100e-5}, dt{1e-8};
     constexpr uint numOfTimeSteps = static_cast<uint>(simTime/dt);
     auto pExtortion = std::make_unique<std::vector<float>> (std::vector<float>(numOfTimeSteps, 0.0f));
@@ -68,7 +57,7 @@ inline std::unique_ptr<std::vector<float>> getExtortionSingleSin() {
     return pExtortion;
 }
 
-inline std::unique_ptr<std::vector<float>> getExtortionWaveMix() {
+inline std::unique_ptr<std::vector<float>> getExcitationWaveMix() {
     constexpr float simTime{100e-5}, dt{1e-8};
     constexpr uint numOfTimeSteps = static_cast<uint>(simTime/dt);
     auto pExtortion = std::make_unique<std::vector<float>> (std::vector<float>(numOfTimeSteps, 0.0f));
@@ -83,7 +72,7 @@ inline std::unique_ptr<std::vector<float>> getExtortionWaveMix() {
     return pExtortion;
 }
 
-inline std::unique_ptr<std::vector<float>> getExtortionLG() {
+inline std::unique_ptr<std::vector<float>> getExcitationLG() {
     constexpr float simTime{100e-5}, dt{1e-8};
     constexpr uint numOfTimeSteps = static_cast<uint>(simTime/dt);
     auto pExtortion = std::make_unique<std::vector<float>> (std::vector<float>(numOfTimeSteps, 0.0f));
