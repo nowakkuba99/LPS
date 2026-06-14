@@ -1,0 +1,37 @@
+# Build artifacts
+lps-server
+10_Compute_LISA
+src/*.o
+src/**/*.o
+
+# Output data
+readOut.dat
+*.dat
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Xcode
+*.xcodeproj/
+*.xcworkspace/
+xcuserdata/
+DerivedData/
+
+# Compiled objects
+*.o
+*.a
+*.dylib
+
+# Address sanitizer logs
+*.log
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# third_party — vendored, not tracked
+third_party/
