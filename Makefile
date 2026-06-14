@@ -1,17 +1,15 @@
-APP_OBJECTS              = src/main.o
-RENDERER_OBJECTS         = src/Renderer/Renderer.o
+APP_OBJECTS               = src/main.o
+RENDERER_OBJECTS          = src/Renderer/Renderer.o
 MY_MTK_VIEW_DELEGATE_OBJECTS = src/MyMTKViewDelegate/MyMTKViewDelegate.o
-MY_APP_DELEGATE_OBJECTS  = src/MyAppDelegate/MyAppDelegate.o
+MY_APP_DELEGATE_OBJECTS   = src/MyAppDelegate/MyAppDelegate.o
 SIMULATION_ENGINE_OBJECTS = src/SimulationEngine/SimulationEngine.o
-JOB_MANAGER_OBJECTS      = src/JobManager/JobManager.o
 
 ALL_OBJECTS = \
 	$(APP_OBJECTS) \
 	$(RENDERER_OBJECTS) \
 	$(MY_MTK_VIEW_DELEGATE_OBJECTS) \
 	$(MY_APP_DELEGATE_OBJECTS) \
-	$(SIMULATION_ENGINE_OBJECTS) \
-	$(JOB_MANAGER_OBJECTS)
+	$(SIMULATION_ENGINE_OBJECTS)
 
 ifdef DEBUG
 DBG_OPT_FLAGS=-g
@@ -39,15 +37,15 @@ LDFLAGS=-framework Metal -framework Foundation -framework Cocoa \
 %.o: %.cpp
 	$(CC) -c $(CFLAGS) $< -o $@
 
-all: lps-server
+all: lps
 
 .PHONY: all clean cleanExe
 
-lps-server: $(ALL_OBJECTS) Makefile
+lps: $(ALL_OBJECTS) Makefile
 	$(CC) $(CFLAGS) $(LDFLAGS) $(ALL_OBJECTS) -o $@
 
 clean:
 	rm -f $(ALL_OBJECTS)
 
 cleanExe:
-	rm -f lps-server
+	rm -f lps

@@ -1,0 +1,24 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: lps
+      POSTGRES_USER: lps
+      POSTGRES_PASSWORD: lps
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lps"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # frontend:  # uncomment in Phase 5
+  #   build: ./frontend
+  #   ports:
+  #     - "3000:3000"
+
+volumes:
+  postgres_data:

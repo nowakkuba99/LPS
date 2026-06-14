@@ -1,5 +1,5 @@
 # Build artifacts
-lps-server
+lps
 src/*.o
 src/**/*.o
 
@@ -35,3 +35,4 @@ DerivedData/
 # third_party — large vendored libs excluded; small downloaded headers are tracked
 third_party/metal-cpp/
 third_party/metal-cpp-extensions/
+lps-server
